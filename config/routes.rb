@@ -1,4 +1,6 @@
 Shop::Application.routes.draw do
+  resources :baskets
+
   resources :goods
 
   resources :users
