@@ -12,15 +12,17 @@
   </tr>
 
 <%#= form_tag '/users', :method => :post %>
-<%= form_tag '/users', :method => :post %>
-<%#= form_tag '/orders3', :method => :post %>
+<%#= form_tag '/users', :method => :post %>
+<%= form_tag '/order3', :method => :post %>
+<% i = 0 %>
 <% @goods.each do |good| %>
   <tr>
     <td><%= check_box_tag "item_#{good.id}_order" %></td>
     <td><%= good.title %></td>
     <td>
     <%#= good.count %>
-    <%= number_field_tag "item_#{good.id}_cnt", '1', :min => 0, :max => good.count %>
+    <% i += 1 %>
+    <%= number_field_tag "item_#{good.id}_cnt", 2*i-1, :min => 0, :max => good.count %>
     </td>
     <td><%= good.price %></td>
     <td><%= link_to 'Show', good %></td>

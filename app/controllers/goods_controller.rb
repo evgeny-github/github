@@ -2,20 +2,33 @@ class GoodsController < ApplicationController
 
   def order3
     # @goods = Good.find([1,2,5])
+    @goods = []
     items = []
     @debug = [:a, :abs]
+    @debug = []
     params.each_with_index { | v, i |
-      @debug << i
-      @debug << v
-      if i =~ %r^item_(\d+)_order$
+      #~ @debug << i
+      #~ @debug << v[1] #if @debug == []
+      if v[0] =~ %r^item_(\d+)_order$
         # if params['item_NN_order'] == '1' 
         # then find item
-        item = Good.find v
-        # @goods << item
-        items << item.id
+        id = $1
+        @debug << "item #$1"
+        @debug << params["item_#$1_cnt"]
+        items << $1
+        item = Good.find id
+        @debug << item.attributes['count']
+        #~ item.attributes['count'] = params["item_#{id}_cnt"]
+        item.count = params["item_#{id}_cnt"]
+        @debug << item.attributes['count']
+        @goods << item
+        # items << item.id
       end
     }
-    @goods = Good.find([])
+    #~ @goods = Good.find([])
+    #~ @debug << @goods.size
+    #~ @goods = Good.find([items])
+    #~ @debug << @goods[0].attributes['count']
     #~ @debug = items
 
     respond_to do |format|
