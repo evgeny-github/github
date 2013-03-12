@@ -2,6 +2,9 @@ Shop::Application.routes.draw do
 
   #root :to => 'welcome#index'
   match '' => 'welcome#index'
+  match '/order' => 'goods#order'
+  match '/order3' => 'goods#order3', :via => [:post]
+  match '/request' => 'goods#request'
 
   get "welcome/index"
 

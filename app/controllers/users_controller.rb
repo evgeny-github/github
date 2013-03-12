@@ -57,6 +57,10 @@ class UsersController < ApplicationController
   # PUT /users/1.json
   def update
     @user = User.find(params[:id])
+    if params['dont'] == '1'
+      flash.now['User modification denied.']
+      redirect_to users_path and return
+    end
 
     respond_to do |format|
       if @user.update_attributes(params[:user])

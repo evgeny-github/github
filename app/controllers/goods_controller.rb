@@ -1,4 +1,48 @@
 class GoodsController < ApplicationController
+
+  def order3
+    # @goods = Good.find([1,2,5])
+    items = []
+    @debug = [:a, :abs]
+    params.each_with_index { | v, i |
+      @debug << i
+      @debug << v
+      if i =~ %r^item_(\d+)_order$
+        # if params['item_NN_order'] == '1' 
+        # then find item
+        item = Good.find v
+        # @goods << item
+        items << item.id
+      end
+    }
+    @goods = Good.find([])
+    #~ @debug = items
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.json { render json: @goods }
+    end
+  end
+
+
+  def order2
+    @goods = Good.all
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.json { render json: @goods }
+    end
+  end
+
+  def order
+    @goods = Good.all
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.json { render json: @goods }
+    end
+  end
+
   # GET /goods
   # GET /goods.json
   def index
