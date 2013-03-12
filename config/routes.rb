@@ -1,4 +1,12 @@
 Shop::Application.routes.draw do
+
+  #root :to => 'welcome#index'
+  match '' => 'welcome#index'
+
+  get "welcome/index"
+
+  get "welcome/show"
+
   resources :baskets
 
   resources :goods

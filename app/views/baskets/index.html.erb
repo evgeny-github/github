@@ -1,5 +1,8 @@
 <h1>Listing baskets</h1>
 
+<% if @baskets.size == 0 then %>
+No baskets are created (YET).
+<% else %>
 <table>
   <tr>
     <th>User</th>
@@ -23,6 +26,7 @@
   </tr>
 <% end %>
 </table>
+<% end %>
 
 <br />
 

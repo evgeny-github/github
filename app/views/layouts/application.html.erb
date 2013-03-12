@@ -5,10 +5,13 @@
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
+  <%= stylesheet_link_tag 'blueprint/screen', :media => 'screen' %>
+
 </head>
 <body>
 
 <%= yield %>
+<%= debug(params) %>
 
 </body>
 </html>
