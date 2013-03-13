@@ -2,6 +2,7 @@ class BasketsController < ApplicationController
   # GET /baskets
   # GET /baskets.json
   def index
+    @title = 'basket list'
     @baskets = Basket.all
 
     respond_to do |format|
@@ -40,17 +41,58 @@ class BasketsController < ApplicationController
   # POST /baskets
   # POST /baskets.json
   def create
-    @basket = Basket.new(params[:basket])
 
-    respond_to do |format|
-      if @basket.save
-        format.html { redirect_to @basket, notice: 'Basket was successfully created.' }
-        format.json { render json: @basket, status: :created, location: @basket }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @basket.errors, status: :unprocessable_entity }
+    @goods = []
+    items = []
+    @debug = [:a, :abs]
+    @debug = []
+    params.each_with_index { | v, i |
+      #~ @debug << i
+      #~ @debug << v[1] #if @debug == []
+      if v[0] =~ %r^item_(\d+)_order$
+        # if params['item_NN_order'] == '1' 
+        # then find item
+        id = $1
+        quantity = params["item_#$1_cnt"]
+        @debug << "item #$1"
+        @debug << params["item_#$1_cnt"]
+        items << $1
+        item = Good.find id
+        @debug << item.attributes['count']
+        #~ item.attributes['count'] = params["item_#{id}_cnt"]
+        item.count = params["item_#{id}_cnt"]
+        @debug << item.attributes['count']
+        @goods << item
+        # items << item.id
+        
+        #~ basket_item = Basket.new do | elem |
+          #~ elem.user_id = 2 # Hard-code
+          #~ elem.good_id = id
+          #~ elem.count = quantity
+          #~ elem.price = item.price
+          #~ elem.send = FALSE
+          #~ elem.send_date = nil
+        #~ end
+        #~ basket_item.save
+        basket_item = Basket.new
+        #~ basket_item = Basket.create(:user_id => 2, :good_id => id, :count => quantity)
+        
       end
-    end
+    }
+    
+    redirect_to :action => 'index' and return
+
+    #~ @basket = Basket.new(params[:basket])
+
+    #~ respond_to do |format|
+      #~ if @basket.save
+        #~ format.html { redirect_to @basket, notice: 'Basket was successfully created.' }
+        #~ format.json { render json: @basket, status: :created, location: @basket }
+      #~ else
+        #~ format.html { render action: "new" }
+        #~ format.json { render json: @basket.errors, status: :unprocessable_entity }
+      #~ end
+    #~ end
   end
 
   # PUT /baskets/1

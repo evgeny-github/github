@@ -59,6 +59,7 @@ class GoodsController < ApplicationController
   # GET /goods
   # GET /goods.json
   def index
+    @title = 'goods list'
     @goods = Good.all
 
     respond_to do |format|
