@@ -4,26 +4,20 @@ class GoodsController < ApplicationController
     # @goods = Good.find([1,2,5])
     @goods = []
     items = []
-    @debug = [:a, :abs]
     @debug = []
-    params.each_with_index { | v, i |
-      #~ @debug << i
-      #~ @debug << v[1] #if @debug == []
-      if v[0] =~ %r^item_(\d+)_order$
-        # if params['item_NN_order'] == '1' 
-        # then find item
-        id = $1
-        @debug << "item #$1"
-        @debug << params["item_#$1_cnt"]
-        items << $1
-        item = Good.find id
-        @debug << item.attributes['count']
-        #~ item.attributes['count'] = params["item_#{id}_cnt"]
-        item.count = params["item_#{id}_cnt"]
-        @debug << item.attributes['count']
-        @goods << item
-        # items << item.id
+    params[:goods].each { | elem |
+      good_id = elem[0]
+      #~ @debug << elem[1][:quantity]
+      unless elem[1][:ordered].nil?
+        @debug << "item id is #{good_id}"
+        @debug << elem[1][:ordered]
+        @debug << elem[1][:quantity]
+        @debug << current_user.class
+        #~ basket = current_user.baskets.create({:good => Good.find(good_id)})
+        #~ basket.save
+        
       end
+
     }
     #~ @goods = Good.find([])
     #~ @debug << @goods.size

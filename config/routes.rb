@@ -1,10 +1,18 @@
 Shop::Application.routes.draw do
 
-  #root :to => 'welcome#index'
+  devise_for :admins
+  resources :admins
+
+  devise_for :users
+
+  root :to => 'welcome#index'
   match '' => 'welcome#index'
   match '/order' => 'goods#order'
   match '/order3' => 'goods#order3', :via => [:post]
   match '/request' => 'goods#request'
+
+  match '/signin' => 'welcome#signin'
+  match '/signout' => 'welcome#signout'
 
   get "welcome/index"
 

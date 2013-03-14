@@ -1,22 +1,7 @@
 class UsersController < ApplicationController
-
-  before_filter :cancel_on_restriction, :only => [:update]
-  before_filter :authenticate_user!
-  
-  def cancel_on_restriction
-    if params['dont'] == '1'
-      # flash[:notice] = 'User modification denied.'
-      # redirect_to users_path and return
-      flash.now[:error] = 'User modification denied.'
-      #~ redirect_to :action => 'edit', :status => 403 and return false
-      redirect_to :action => 'edit' and return false
-    end
-  end
-  
   # GET /users
   # GET /users.json
   def index
-    @title = 'user index'
     @users = User.all
 
     respond_to do |format|

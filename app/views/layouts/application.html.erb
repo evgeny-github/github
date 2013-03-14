@@ -11,6 +11,9 @@
 
 </head>
 <body>
+       <p class="notice"><%= notice %></p>
+<%= render :partial => 'layouts/header' %>
+       <p class="alert"><%= alert %></p>
 
 <%= yield %>
 <%= debug(params) %>
