@@ -2,6 +2,7 @@ class BasketsController < ApplicationController
   # GET /baskets
   # GET /baskets.json
   def index
+    @title = 'basket list'
     @baskets = Basket.all
 
     respond_to do |format|
@@ -40,17 +41,49 @@ class BasketsController < ApplicationController
   # POST /baskets
   # POST /baskets.json
   def create
-    @basket = Basket.new(params[:basket])
 
-    respond_to do |format|
-      if @basket.save
-        format.html { redirect_to @basket, notice: 'Basket was successfully created.' }
-        format.json { render json: @basket, status: :created, location: @basket }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @basket.errors, status: :unprocessable_entity }
+    @goods = []
+    @debug = [123]
+    
+    params[:goods].each { | elem |
+      good_id = elem[0]
+      
+      #~ @debug << elem[1][:quantity]
+      unless elem[1][:ordered].nil?
+        quantity = elem[1][:quantity]
+        good = Good.find good_id
+        price = good.price # ordered good price can be different from current price
+        @debug << "item id is #{good_id}"
+        @debug << elem[1][:ordered]
+        @debug << elem[1][:quantity]
+        @debug << current_user.class
+        #~ basket = current_user.baskets.new
+        #basket = current_user.baskets.create({:good => Good.find(good_id)})
+        current_user.baskets << Basket.new({:user => current_user, :good => Good.find(good_id), count: quantity, price: price  })
+        #~ FAILS
+        #~ because Basket.new doesn't work (even in rails console)
+        #~ Some mistic behavior of 'Basket' class
+        #~ 
+
+        #~ g = Good.new
+        #~ basket.save
+        
       end
-    end
+    }
+    
+    redirect_to :action => 'index' and return
+
+    #~ @basket = Basket.new(params[:basket])
+
+    #~ respond_to do |format|
+      #~ if @basket.save
+        #~ format.html { redirect_to @basket, notice: 'Basket was successfully created.' }
+        #~ format.json { render json: @basket, status: :created, location: @basket }
+      #~ else
+        #~ format.html { render action: "new" }
+        #~ format.json { render json: @basket.errors, status: :unprocessable_entity }
+      #~ end
+    #~ end
   end
 
   # PUT /baskets/1
@@ -80,4 +113,24 @@ class BasketsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+
+
+  # GET /baskets/items
+  def items
+    @title = 'User basket'
+    # @baskets = Basket.all
+    @baskets = Basket.find_all_by_user_id current_user.id
+    
+    
+    @debug ||= []
+    #~ @debug << @baskets.class.inspect
+    @baskets.each { | basket |
+      # basket.good_id = 'title'
+      #~ basket.good_id = 123
+      @debug << basket
+    }
+
+  end
+
 end

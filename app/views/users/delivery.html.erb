@@ -1,0 +1,42 @@
+<h1>Basket items for user</h1>
+
+<% if @baskets.nil? then %>
+Baskets is empty.
+<% else %>
+<table>
+  <tr>
+    <th>Get item</th>
+    <th>Delivery date</th>
+    <th>User ID</th>
+    <th>Good ID</th>
+    <th>Count</th>
+    <th>Price</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<%#= form_tag "#{user_path(current_user.user_id)}/send', :method => :post %>
+<%= form_tag "#{user_path(current_user.id)}/send", :method => :post %>
+<% @baskets.each do |basket| %>
+  <tr>
+    <td>
+    <%#= check_box_tag "basket.good_id" if basket.send_completed.nil? %>
+    <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]" if basket.send_completed.nil? %>
+    </td>
+    <td><%= basket.send_date %></td>
+    <td><%= basket.user_id %></td>
+    <td><%= basket.good_id %></td>
+    <td><%= basket.count %></td>
+    <td><%= basket.price %></td>
+    <td><%= link_to 'Edit', edit_basket_path(basket) %></td>
+    <td><%= link_to 'Remove', basket, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+<%= button_tag "make order" %>
+<% end %>
+
+<br />
+
+<%= link_to 'New Basket', new_basket_path %>

@@ -11,12 +11,16 @@ Shop::Application.routes.draw do
   match '/order3' => 'goods#order3', :via => [:post]
   match '/request' => 'goods#request'
 
+  match '/signup' => 'devise/registrations#new'
   match '/signin' => 'welcome#signin'
   match '/signout' => 'welcome#signout'
 
   get "welcome/index"
 
   get "welcome/show"
+
+  match '/baskets/items' => 'baskets#items'
+  match '/users/:id/send' => 'users#delivery'
 
   resources :baskets
 

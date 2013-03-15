@@ -95,4 +95,25 @@ class UsersController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  # POST /users/:id/send
+  def delivery
+
+    @goods = []
+    @debug = []
+    
+    params[:goods].each { | elem |
+      good_id = elem[0]
+      
+      unless elem[1][:ready_to_deliver].nil?
+        basket = Basket.find good_id
+        basket.send_completed = TRUE
+        basket.send_date = Time.now
+        basket.save
+        @debug << "item id is #{good_id}"
+        
+      end
+    } unless params[:goods].nil?
+      
+  end
 end

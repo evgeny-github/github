@@ -1,12 +1,12 @@
 <h1>Listing baskets</h1>
 
-<% if @baskets.size == 0 then %>
+<% if @baskets.nil? then %>
 No baskets are created (YET).
 <% else %>
 <table>
   <tr>
-    <th>User</th>
-    <th>Good</th>
+    <th>User ID</th>
+    <th>Good ID</th>
     <th>Count</th>
     <th>Price</th>
     <th></th>
