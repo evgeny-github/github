@@ -7,7 +7,7 @@ Baskets is empty.
   <tr>
     <th>Get item</th>
     <th>Delivery date</th>
-    <th>Good ID</th>
+    <th>Good</th>
     <th>Count</th>
     <th>Price</th>
     <th></th>
@@ -28,7 +28,7 @@ Baskets is empty.
     <% end -%>
     </td>
     <td><%= basket.send_date %></td>
-    <td><%= basket.good_id %></td>
+    <td><%= basket.good.title %></td>
     <td><%= basket.count %></td>
     <td><%= basket.price %></td>
     <td><%= link_to 'Edit', edit_basket_path(basket) if basket.send_completed.nil? %></td>

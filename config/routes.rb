@@ -22,6 +22,9 @@ Shop::Application.routes.draw do
   match '/baskets/items' => 'baskets#items'
   match '/users/:id/send' => 'users#delivery'
 
+  match '/profile/basket' => 'baskets#items'
+  match '/profile/delivery' => 'baskets#items'
+
   resources :baskets
 
   resources :goods

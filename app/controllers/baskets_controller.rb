@@ -51,23 +51,20 @@ class BasketsController < ApplicationController
       #~ @debug << elem[1][:quantity]
       unless elem[1][:ordered].nil?
         quantity = elem[1][:quantity]
-        good = Good.find good_id
-        price = good.price # ordered good price can be different from current price
-        @debug << "item id is #{good_id}"
-        @debug << elem[1][:ordered]
-        @debug << elem[1][:quantity]
-        @debug << current_user.class
-        #~ basket = current_user.baskets.new
-        #basket = current_user.baskets.create({:good => Good.find(good_id)})
-        current_user.baskets << Basket.new({:user => current_user, :good => Good.find(good_id), count: quantity, price: price  })
-        #~ FAILS
-        #~ because Basket.new doesn't work (even in rails console)
-        #~ Some mistic behavior of 'Basket' class
-        #~ 
-
-        #~ g = Good.new
-        #~ basket.save
-        
+        if quantity.to_i > 0
+          good = Good.find good_id
+          price = good.price # ordered good price can be different from current price
+          @debug << "item id is #{good_id}"
+          @debug << elem[1][:ordered]
+          @debug << elem[1][:quantity]
+          @debug << current_user.class
+          #~ basket = current_user.baskets.new
+          #basket = current_user.baskets.create({:good => Good.find(good_id)})
+          basket = Basket.find_by_user_id_and_good_id current_user.id, good_id
+          basket = Basket.new({:user => current_user, :good => Good.find(good_id), count: 0, price: price  }) if basket.nil?
+          basket.count += quantity.to_i
+          current_user.baskets << basket
+        end
       end
     }
     
