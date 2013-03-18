@@ -120,6 +120,19 @@ class BasketsController < ApplicationController
     # @baskets = Basket.all
     @baskets = Basket.find_all_by_user_id current_user.id
     
+    @debug ||= []
+    #~ @debug << @baskets.class.inspect
+    @baskets.each { | basket |
+      # basket.good_id = 'title'
+      #~ basket.good_id = 123
+      @debug << basket
+    }
+  end
+
+  def history
+    @title = 'User basket history'
+    # @baskets = Basket.all
+    @baskets = Basket.find_all_by_user_id_and_send_completed current_user.id, TRUE
     
     @debug ||= []
     #~ @debug << @baskets.class.inspect
@@ -128,7 +141,72 @@ class BasketsController < ApplicationController
       #~ basket.good_id = 123
       @debug << basket
     }
+    render 'items'
 
+  end
+
+  def requested
+
+    @baskets = []
+    @debug = []
+    
+    baskets_all = Basket.find_all_by_user_id current_user.id
+    baskets_all.each { | basket |
+      next unless basket.send_date.nil?
+      good_id = basket.id
+      # @debug << params["goods"].to_hash[good_id.to_s].class
+      unless params["goods"].to_hash[good_id.to_s].nil?
+      @debug << params["goods"].to_hash[good_id.to_s][:ready_to_deliver]
+      end
+        
+      # [:ready_to_deliver]
+      # @debug << params["goods"].class
+      # @debug << params["goods[#{good_id}][ready_to_deliver]"]
+      # @debug << "item id is #{good_id}"
+      # item = params["goods[#{good_id}]"]
+      # @debug << item
+      # @debug << params[:goods]
+      # @debug << params[:authenticity_token].class
+      # @debug << params[:utf8]
+      # puts @debug << params[:goods]
+
+
+          # Нет выборки параметра POST
+          basket.send_completed = FALSE
+          basket.save
+
+      # if params[:goods][good_id].nil? or params[:goods][good_id][:ready_to_deliver].nil?
+      #     basket.send_completed = FALSE
+      #     basket.save
+      # else
+      #   basket.send_completed = TRUE
+      #   # Date is changed when user's request is completed by 'warehouse worker'
+      #   # basket.send_date = Time.now
+      #   basket.save
+      #   @debug << "item id is #{good_id}"
+      # end
+    }
+
+    params[:goods].each { | elem |
+      good_id = elem[0]
+      
+        basket = Basket.find good_id
+      if elem[1][:ready_to_deliver].nil?
+        if basket.send_date.nil?
+          basket.send_completed = FALSE
+          basket.save
+        end
+      else
+        basket = Basket.find good_id
+        basket.send_completed = TRUE
+        # Date is changed when user's request is completed by 'warehouse worker'
+        # basket.send_date = Time.now
+        basket.save
+        @debug << "item id is #{good_id}"
+        
+      end
+    } unless params[:goods].nil?
+      
   end
 
 end

@@ -97,7 +97,7 @@ class UsersController < ApplicationController
   end
 
   # POST /users/:id/send
-  def delivery
+  def requested
 
     @goods = []
     @debug = []
