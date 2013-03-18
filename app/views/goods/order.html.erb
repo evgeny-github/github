@@ -15,12 +15,14 @@
 <%#= form_tag '/users', :method => :post %>
 <%#= form_tag '/users', :method => :post %>
 <%#= form_tag '/order3', :method => :post %>
+<%#= form_tag '/baskets', :method => :post %>
+<%#= form_tag '/profile/basket', :method => :post %>
 <%= form_tag '/baskets', :method => :post %>
 <% i = 0 %>
 <% @goods.each do |good| %>
   <tr>
     <td><%#= check_box_tag "item_#{good.id}_order" %>
-    <%= check_box_tag "goods[#{good.id}][ordered]" %></td>
+    <%= check_box_tag "goods[#{good.id}][ordered]", -1 %></td>
     <td><%= good.id %></td>
     <td><%= good.title %></td>
     <td>

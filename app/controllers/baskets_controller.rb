@@ -60,9 +60,10 @@ class BasketsController < ApplicationController
           @debug << current_user.class
           #~ basket = current_user.baskets.new
           #basket = current_user.baskets.create({:good => Good.find(good_id)})
-          basket = Basket.find_by_user_id_and_good_id current_user.id, good_id
+          basket = Basket.find_by_user_id_and_good_id_and_send_completed current_user.id, good_id, FALSE
           basket = Basket.new({:user => current_user, :good => Good.find(good_id), count: 0, price: price  }) if basket.nil?
           basket.count += quantity.to_i
+          basket.send_completed = FALSE
           current_user.baskets << basket
         end
       end

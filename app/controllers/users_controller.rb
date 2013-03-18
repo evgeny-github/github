@@ -108,12 +108,20 @@ class UsersController < ApplicationController
       unless elem[1][:ready_to_deliver].nil?
         basket = Basket.find good_id
         basket.send_completed = TRUE
-        basket.send_date = Time.now
+        # Date is changed when user's request is completed by 'warehouse worker'
+        # basket.send_date = Time.now
         basket.save
         @debug << "item id is #{good_id}"
         
       end
     } unless params[:goods].nil?
       
+  end
+
+  # GET /users/:id/basket
+  def basket
+    @debug = [123]
+    @baskets = Basket.find_all_by_user_id_and_send_date current_user.id, nil
+    @debug << @baskets
   end
 end

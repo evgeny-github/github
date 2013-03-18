@@ -1,7 +1,7 @@
-<h1>Basket items for user</h1>
+<h1>User's basket</h1>
 
 <% if @baskets.nil? then %>
-Baskets is empty.
+<h2>Baskets is empty.</h2>
 <% else %>
 <table>
   <tr>
@@ -22,11 +22,10 @@ Baskets is empty.
     <td>
     <%#= check_box_tag "basket.good_id" if basket.send_completed.nil? %>
     <%# if basket.send_completed.nil? or (basket.send_completed == FALSE) -%>
-    <% if basket.send_date.nil? -%>
-    <%#= basket.send_completed ? -1 : +1 -%>
-    <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", -1, basket.send_completed %>
+    <% if basket.send_completed == TRUE -%>
+    <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]" %>
     <% else %>
-    <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", 1, false, :disabled => true %>
+    <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", +1, false, :disabled => true %>
     <% end -%>
     </td>
     <td><%= basket.send_date %></td>
@@ -38,9 +37,7 @@ Baskets is empty.
   </tr>
 <% end %>
 </table>
-<%= button_tag "make order" %>
+<%= button_tag "Complete user's request" %>
 <% end %>
 
 <br />
-
-<%= link_to 'New Basket', new_basket_path %>
