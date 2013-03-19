@@ -69,7 +69,7 @@ class BasketsController < ApplicationController
       end
     }
     
-    redirect_to :action => 'index' and return
+    redirect_to :action => 'items' and return
 
     #~ @basket = Basket.new(params[:basket])
 
@@ -91,6 +91,7 @@ class BasketsController < ApplicationController
 
     respond_to do |format|
       if @basket.update_attributes(params[:basket])
+    redirect_to action: 'items' and return
         format.html { redirect_to @basket, notice: 'Basket was successfully updated.' }
         format.json { head :no_content }
       else
@@ -115,10 +116,14 @@ class BasketsController < ApplicationController
 
 
   # GET /baskets/items
+  # GET /profile/basket
   def items
     @title = 'User basket'
     # @baskets = Basket.all
-    @baskets = Basket.find_all_by_user_id current_user.id
+    @baskets = Basket.find_all_by_user_id current_user.id,
+    joins: "left join goods on baskets.good_id = goods.id",
+    conditions: ["send_date is NULL"],
+    order: "title"
     
     @debug ||= []
     #~ @debug << @baskets.class.inspect
@@ -132,7 +137,9 @@ class BasketsController < ApplicationController
   def history
     @title = 'User basket history'
     # @baskets = Basket.all
-    @baskets = Basket.find_all_by_user_id_and_send_completed current_user.id, TRUE
+    @baskets = Basket.find_all_by_user_id_and_delivery_requested current_user.id, TRUE,
+    # @baskets = Basket.find_all_by_user_id_and_send_completed current_user.id, TRUE,
+    order: "send_completed DESC, send_date DESC"
     
     @debug ||= []
     #~ @debug << @baskets.class.inspect
@@ -218,6 +225,9 @@ class BasketsController < ApplicationController
       ],
       order: "send_completed DESC, send_date DESC, title"
       
+      # raise "Aborting"
+      # redirect_to action: 'items' and return
+      redirect_to action: 'history' and return
   end
 
   def delivery

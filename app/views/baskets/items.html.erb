@@ -34,7 +34,7 @@ Baskets is empty.
     <td><%= basket.good.title %></td>
     <td><%= basket.count %></td>
     <td><%= basket.price %></td>
-    <td><%= link_to 'Edit', edit_basket_path(basket) if basket.send_completed.nil? %></td>
+    <td><%= link_to 'Edit', edit_basket_path(basket) if basket.send_date.nil? %></td>
     <td><%= link_to 'Remove', basket, confirm: 'Are you sure?', method: :delete %></td>
   </tr>
 <% end %>

@@ -12,20 +12,24 @@
   <% end %>
 
   <div class="field">
+    <%= f.label :price %><br />
+    <%= text_field_tag :price, @basket.price, disabled: TRUE %>
+  </div>
+
+<!--
+  <div class="field">
     <%= f.label :user_id %><br />
-    <%= f.number_field :user_id %>
+    <%= text_field_tag :user_id, @basket.user_id, disabled: TRUE %>
   </div>
   <div class="field">
     <%= f.label :good_id %><br />
-    <%= f.number_field :good_id %>
+    <%= text_field_tag :good_id, @basket.good.title, disabled: TRUE %>
   </div>
+-->
+
   <div class="field">
     <%= f.label :count %><br />
     <%= f.number_field :count %>
-  </div>
-  <div class="field">
-    <%= f.label :price %><br />
-    <%= f.number_field :price %>
   </div>
   <div class="actions">
     <%= f.submit %>

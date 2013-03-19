@@ -1,6 +1,11 @@
-<h1>Editing basket</h1>
+<h1>Editing request for 
+`<%= @basket.good.title -%>`
+</h1>
 
 <%= render 'form' %>
 
+<!--
 <%= link_to 'Show', @basket %> |
 <%= link_to 'Back', baskets_path %>
+-->
+<%= link_to 'View your basket', '/profile/basket' %>
