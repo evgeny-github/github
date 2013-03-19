@@ -150,42 +150,43 @@ class BasketsController < ApplicationController
     @baskets = []
     @debug = []
     
-    baskets_all = Basket.find_all_by_user_id current_user.id
-    baskets_all.each { | basket |
-      next unless basket.send_date.nil?
-      good_id = basket.id
-      # @debug << params["goods"].to_hash[good_id.to_s].class
-      unless params["goods"].to_hash[good_id.to_s].nil?
-      @debug << params["goods"].to_hash[good_id.to_s][:ready_to_deliver]
-      end
+    Basket.update_all("send_completed = 'f'", "user_id = #{current_user.id} and send_date is not NULL")
+    # baskets_all = Basket.find_all_by_user_id current_user.id
+    # baskets_all.each { | basket |
+    #   next unless basket.send_date.nil?
+    #   good_id = basket.id
+    #   # @debug << params["goods"].to_hash[good_id.to_s].class
+    #   unless params["goods"].to_hash[good_id.to_s].nil?
+    #   @debug << params["goods"].to_hash[good_id.to_s][:ready_to_deliver]
+    #   end
         
-      # [:ready_to_deliver]
-      # @debug << params["goods"].class
-      # @debug << params["goods[#{good_id}][ready_to_deliver]"]
-      # @debug << "item id is #{good_id}"
-      # item = params["goods[#{good_id}]"]
-      # @debug << item
-      # @debug << params[:goods]
-      # @debug << params[:authenticity_token].class
-      # @debug << params[:utf8]
-      # puts @debug << params[:goods]
+    #   # [:ready_to_deliver]
+    #   # @debug << params["goods"].class
+    #   # @debug << params["goods[#{good_id}][ready_to_deliver]"]
+    #   # @debug << "item id is #{good_id}"
+    #   # item = params["goods[#{good_id}]"]
+    #   # @debug << item
+    #   # @debug << params[:goods]
+    #   # @debug << params[:authenticity_token].class
+    #   # @debug << params[:utf8]
+    #   # puts @debug << params[:goods]
 
 
-          # Нет выборки параметра POST
-          basket.send_completed = FALSE
-          basket.save
+    #       # Нет выборки параметра POST
+    #       basket.send_completed = FALSE
+    #       # basket.save
 
-      # if params[:goods][good_id].nil? or params[:goods][good_id][:ready_to_deliver].nil?
-      #     basket.send_completed = FALSE
-      #     basket.save
-      # else
-      #   basket.send_completed = TRUE
-      #   # Date is changed when user's request is completed by 'warehouse worker'
-      #   # basket.send_date = Time.now
-      #   basket.save
-      #   @debug << "item id is #{good_id}"
-      # end
-    }
+    #   # if params[:goods][good_id].nil? or params[:goods][good_id][:ready_to_deliver].nil?
+    #   #     basket.send_completed = FALSE
+    #   #     basket.save
+    #   # else
+    #   #   basket.send_completed = TRUE
+    #   #   # Date is changed when user's request is completed by 'warehouse worker'
+    #   #   # basket.send_date = Time.now
+    #   #   basket.save
+    #   #   @debug << "item id is #{good_id}"
+    #   # end
+    # }
 
     params[:goods].each { | elem |
       good_id = elem[0]
@@ -202,6 +203,38 @@ class BasketsController < ApplicationController
         # Date is changed when user's request is completed by 'warehouse worker'
         # basket.send_date = Time.now
         basket.save
+        @debug << "item id is #{good_id}"
+        
+      end
+    } unless params[:goods].nil?
+
+    @baskets = Basket.find :all,
+      select: "baskets.*, goods.title",
+      # from: "baskets, goods",
+      # from: "baskets",
+      joins: "left join goods on baskets.good_id = goods.id",
+      conditions: [
+        "(send_date is not NULL OR send_completed = 't') AND user_id = :user_id", {user_id: current_user.id}
+      ],
+      order: "send_completed DESC, send_date DESC, title"
+      
+  end
+
+  def delivery
+
+    @baskets = []
+    @debug = []
+    
+    params[:goods].each { | good |
+      good_id = good[0]
+      
+      unless good[1][:ready_to_deliver].nil?
+        basket = Basket.find good_id
+        # basket.send_completed = TRUE
+        # Date is changed when user's request is completed by 'warehouse worker'
+        basket.send_date = Time.now
+        basket.save
+        @baskets << basket
         @debug << "item id is #{good_id}"
         
       end

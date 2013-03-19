@@ -121,7 +121,11 @@ class UsersController < ApplicationController
   # GET /users/:id/basket
   def basket
     @debug = [123]
-    @baskets = Basket.find_all_by_user_id_and_send_date current_user.id, nil
+    @baskets = Basket.find_all_by_user_id_and_send_date current_user.id, nil,
+      select: "baskets.*, goods.title",
+      # from: "baskets, goods",
+      joins: "left join goods on baskets.good_id = goods.id",
+      order: "send_completed DESC, title"
     @debug << @baskets
   end
 end

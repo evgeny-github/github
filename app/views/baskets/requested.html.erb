@@ -1,7 +1,7 @@
-<h1>Basket items for user</h1>
+<h1>History for request/delivery</h1>
 
 <% if @baskets.nil? then %>
-Baskets is empty.
+No goods requested.
 <% else %>
 <table>
   <tr>
@@ -17,7 +17,7 @@ Baskets is empty.
 
 <%#= form_tag "#{user_path(current_user.user_id)}/send', :method => :post %>
 <%#= form_tag "#{user_path(current_user.id)}/send", :method => :post %>
-<%= form_tag "/profile/request", :method => :post %>
+<%#= form_tag "/profile/request", :method => :post %>
 <% @baskets.each do |basket| %>
   <tr>
     <td>
@@ -25,7 +25,7 @@ Baskets is empty.
     <%# if basket.send_completed.nil? or (basket.send_completed == FALSE) -%>
     <% if basket.send_date.nil? -%>
     <%#= basket.send_completed ? -1 : +1 -%>
-    <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", -1, basket.send_completed %>
+    <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", -1, basket.send_completed, :disabled => true %>
     <% else %>
     <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", 1, false, :disabled => true %>
     <% end -%>
@@ -39,9 +39,9 @@ Baskets is empty.
   </tr>
 <% end %>
 </table>
-<%= button_tag "make order" %>
+<%#= button_tag "make order" %>
 <% end %>
 
 <br />
 
-<%= link_to 'New Basket', new_basket_path %>
+<%= link_to 'Go to basket', '/profile/basket' %>

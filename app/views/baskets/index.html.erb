@@ -7,6 +7,7 @@ No baskets are created (YET).
   <tr>
     <th>User ID</th>
     <th>Good ID</th>
+    <th>Good</th>
     <th>Count</th>
     <th>Price</th>
     <th></th>
@@ -18,6 +19,7 @@ No baskets are created (YET).
   <tr>
     <td><%= basket.user_id %></td>
     <td><%= basket.good_id %></td>
+    <td><%= basket.good.title %></td>
     <td><%= basket.count %></td>
     <td><%= basket.price %></td>
     <td><%= link_to 'Show', basket %></td>
