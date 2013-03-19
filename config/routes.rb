@@ -20,7 +20,8 @@ Shop::Application.routes.draw do
   get "welcome/show"
 
   match '/baskets/items' => 'baskets#items'
-  match '/users/:id/send' => 'users#delivery'
+  #match '/users/:id/send' => 'users#delivery'
+  match '/users/:id/send' => 'baskets#delivery'
   match '/users/:id/basket' => 'users#basket'
 
   match '/profile/basket' => 'baskets#items'
