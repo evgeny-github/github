@@ -23,9 +23,11 @@ Baskets is empty.
     <td>
     <%#= check_box_tag "basket.good_id" if basket.send_completed.nil? %>
     <%# if basket.send_completed.nil? or (basket.send_completed == FALSE) -%>
-    <% if basket.send_date.nil? -%>
+    <%# if basket.send_date.nil? -%>
     <%#= basket.send_completed ? -1 : +1 -%>
-    <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", -1, basket.send_completed %>
+    <% if ["requested", "new"].include? basket.delivery_status -%>
+    <%#= check_box_tag "goods[#{basket.id}][ready_to_deliver]", -1, basket.send_completed %>
+    <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", -1, basket.delivery_status == 'requested' %>
     <% else %>
     <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", 1, false, :disabled => true %>
     <% end -%>

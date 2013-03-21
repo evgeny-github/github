@@ -16,8 +16,8 @@
 <%#= form_tag '/users', :method => :post %>
 <%#= form_tag '/order3', :method => :post %>
 <%#= form_tag '/baskets', :method => :post %>
-<%= form_tag '/profile/basket', :method => :post %>
-<%#= form_tag '/baskets', :method => :post %>
+<%#= form_tag '/profile/basket', :method => :post %>
+<%= form_tag '/baskets', :method => :post %>
 <% i = 0 %>
 <% @goods.each do |good| %>
   <tr>
@@ -28,7 +28,7 @@
     <td>
     <%#= good.count %>
     <% i += 1 %>
-    <%= number_field_tag "goods[#{good.id}][quantity]", 2*i-1, :min => 0, :max => good.count %>
+    <%= number_field_tag "goods[#{good.id}][quantity]", 0, :min => 0, :max => good.count %>
     </td>
     <td><%= good.price %></td>
     <td><%= link_to 'Show', good %></td>

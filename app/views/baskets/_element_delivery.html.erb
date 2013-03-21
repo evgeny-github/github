@@ -1,0 +1,11 @@
+  <tr>
+    <td>
+    <%= check_box_tag "goods[#{element_delivery.id}][ready_to_deliver]", -1, true %>
+    </td>
+    <td><%= element_delivery.count %></td>
+    <td><%= element_delivery.good.title %></td>
+    <td><%= element_delivery.good_id %></td>
+    <td><%= element_delivery.price %></td>
+    <td><%= element_delivery.user_id %></td>
+    <td><%= link_to 'view', basket_path(element_delivery) %></td>
+  </tr>

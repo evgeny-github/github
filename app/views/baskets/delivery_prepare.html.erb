@@ -1,0 +1,41 @@
+<h1>Prepared delivery items for user <%= %></h1>
+
+<% if @baskets.nil? then %>
+Nothing to deliver.
+<% else %>
+<table>
+  <tr>
+    <th>Confirmation</th>
+    <th>Count</th>
+    <th>Good</th>
+    <th>Good ID</th>
+    <th>Price</th>
+    <th>User ID</th>
+    <th></th>
+  </tr>
+
+<%#= form_tag "#{user_path(current_user.user_id)}/send', :method => :post %>
+<%= form_tag "#{user_path(current_user.id)}/send", :method => :post %>
+
+
+<%#= render :partial => 'element_delivery', :collection => @baskets %>
+<% @baskets.each do |basket| %>
+  <tr>
+    <td>
+    <%#= check_box_tag "basket.good_id" if basket.send_completed.nil? %>
+    <%#= check_box_tag "goods[#{basket.id}][ready_to_deliver]" if basket.send_completed.nil? %>
+    <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", -1, true %>
+    </td>
+    <td><%= basket.count %></td>
+    <td><%= basket.good.title %></td>
+    <td><%= basket.good_id %></td>
+    <td><%= basket.price %></td>
+    <td><%= basket.user_id %></td>
+    <td><%= link_to 'Edit', edit_basket_path(basket) %></td>
+  </tr>
+<% end %>
+</table>
+<%= button_tag "Perform order delivery" %>
+<% end %>
+
+<br />

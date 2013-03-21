@@ -21,6 +21,7 @@ Shop::Application.routes.draw do
 
   match '/baskets/items' => 'baskets#items'
   #match '/users/:id/send' => 'users#delivery'
+  match '/users/:id/prepare' => 'baskets#delivery_prepare'
   match '/users/:id/send' => 'baskets#delivery'
   match '/users/:id/basket' => 'users#basket'
 
@@ -34,6 +35,9 @@ Shop::Application.routes.draw do
   resources :goods
 
   resources :users
+  
+  #	Default route handler
+  match '/*path' => 'welcome#error404'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

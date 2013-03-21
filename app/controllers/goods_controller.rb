@@ -1,45 +1,45 @@
 class GoodsController < ApplicationController
 
-  def order3
-    # @goods = Good.find([1,2,5])
-    @goods = []
-    items = []
-    @debug = []
-    params[:goods].each { | elem |
-      good_id = elem[0]
-      #~ @debug << elem[1][:quantity]
-      unless elem[1][:ordered].nil?
-        @debug << "item id is #{good_id}"
-        @debug << elem[1][:ordered]
-        @debug << elem[1][:quantity]
-        @debug << current_user.class
-        #~ basket = current_user.baskets.create({:good => Good.find(good_id)})
-        #~ basket.save
+  # def order3
+  #   # @goods = Good.find([1,2,5])
+  #   @goods = []
+  #   items = []
+  #   @debug = []
+  #   params[:goods].each { | elem |
+  #     good_id = elem[0]
+  #     #~ @debug << elem[1][:quantity]
+  #     unless elem[1][:ordered].nil?
+  #       @debug << "item id is #{good_id}"
+  #       @debug << elem[1][:ordered]
+  #       @debug << elem[1][:quantity]
+  #       @debug << current_user.class
+  #       #~ basket = current_user.baskets.create({:good => Good.find(good_id)})
+  #       #~ basket.save
         
-      end
+  #     end
 
-    }
-    #~ @goods = Good.find([])
-    #~ @debug << @goods.size
-    #~ @goods = Good.find([items])
-    #~ @debug << @goods[0].attributes['count']
-    #~ @debug = items
+  #   }
+  #   #~ @goods = Good.find([])
+  #   #~ @debug << @goods.size
+  #   #~ @goods = Good.find([items])
+  #   #~ @debug << @goods[0].attributes['count']
+  #   #~ @debug = items
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @goods }
-    end
-  end
+  #   respond_to do |format|
+  #     format.html # index.html.erb
+  #     format.json { render json: @goods }
+  #   end
+  # end
 
 
-  def order2
-    @goods = Good.all
+  # def order2
+  #   @goods = Good.all
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @goods }
-    end
-  end
+  #   respond_to do |format|
+  #     format.html # index.html.erb
+  #     format.json { render json: @goods }
+  #   end
+  # end
 
   def order
     @goods = Good.all
@@ -49,6 +49,9 @@ class GoodsController < ApplicationController
       format.json { render json: @goods }
     end
   end
+
+
+
 
   # GET /goods
   # GET /goods.json

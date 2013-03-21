@@ -60,10 +60,14 @@ class BasketsController < ApplicationController
           @debug << current_user.class
           #~ basket = current_user.baskets.new
           #basket = current_user.baskets.create({:good => Good.find(good_id)})
-          basket = Basket.find_by_user_id_and_good_id_and_send_completed current_user.id, good_id, FALSE
-          basket = Basket.new({:user => current_user, :good => Good.find(good_id), count: 0, price: price  }) if basket.nil?
+          # basket = Basket.find_by_user_id_and_good_id_and_send_completed current_user.id, good_id, FALSE
+          basket = Basket.find_by_user_id_and_good_id_and_delivery_status current_user.id, good_id, 'new'
+          basket = Basket.new({:user => current_user, :good => Good.find(good_id), count: 0, price: price, delivery_status: 'new' }) if basket.nil?
           basket.count += quantity.to_i
           basket.send_completed = FALSE
+          basket.delivery_status = 'new'
+          # basket.update_attributes basket.id
+          basket.save
           current_user.baskets << basket
         end
       end
@@ -115,6 +119,9 @@ class BasketsController < ApplicationController
 
 
 
+
+
+
   # GET /baskets/items
   # GET /profile/basket
   def items
@@ -137,9 +144,12 @@ class BasketsController < ApplicationController
   def history
     @title = 'User basket history'
     # @baskets = Basket.all
-    @baskets = Basket.find_all_by_user_id_and_delivery_requested current_user.id, TRUE,
     # @baskets = Basket.find_all_by_user_id_and_send_completed current_user.id, TRUE,
-    order: "send_completed DESC, send_date DESC"
+    # @baskets = Basket.find_all_by_user_id_and_delivery_requested current_user.id, TRUE,
+    # order: "send_completed DESC, send_date DESC"
+    @baskets = Basket.find_all_by_user_id current_user.id,
+    conditions: "send_date is not NULL OR delivery_status = 'requested'",
+    order: "delivery_status DESC, send_date DESC"
     
     @debug ||= []
     #~ @debug << @baskets.class.inspect
@@ -156,44 +166,11 @@ class BasketsController < ApplicationController
 
     @baskets = []
     @debug = []
+    # raise 'You have error'
     
-    Basket.update_all("send_completed = 'f'", "user_id = #{current_user.id} and send_date is not NULL")
-    # baskets_all = Basket.find_all_by_user_id current_user.id
-    # baskets_all.each { | basket |
-    #   next unless basket.send_date.nil?
-    #   good_id = basket.id
-    #   # @debug << params["goods"].to_hash[good_id.to_s].class
-    #   unless params["goods"].to_hash[good_id.to_s].nil?
-    #   @debug << params["goods"].to_hash[good_id.to_s][:ready_to_deliver]
-    #   end
-        
-    #   # [:ready_to_deliver]
-    #   # @debug << params["goods"].class
-    #   # @debug << params["goods[#{good_id}][ready_to_deliver]"]
-    #   # @debug << "item id is #{good_id}"
-    #   # item = params["goods[#{good_id}]"]
-    #   # @debug << item
-    #   # @debug << params[:goods]
-    #   # @debug << params[:authenticity_token].class
-    #   # @debug << params[:utf8]
-    #   # puts @debug << params[:goods]
-
-
-    #       # Нет выборки параметра POST
-    #       basket.send_completed = FALSE
-    #       # basket.save
-
-    #   # if params[:goods][good_id].nil? or params[:goods][good_id][:ready_to_deliver].nil?
-    #   #     basket.send_completed = FALSE
-    #   #     basket.save
-    #   # else
-    #   #   basket.send_completed = TRUE
-    #   #   # Date is changed when user's request is completed by 'warehouse worker'
-    #   #   # basket.send_date = Time.now
-    #   #   basket.save
-    #   #   @debug << "item id is #{good_id}"
-    #   # end
-    # }
+    # Basket.update_all("send_completed = 'f'", "user_id = #{current_user.id} and send_date is not NULL")
+    Basket.update_all("delivery_status = 'new'", "user_id = #{current_user.id} and send_date is NULL")
+    # redirect_to action: 'history' and return
 
     params[:goods].each { | elem |
       good_id = elem[0]
@@ -201,18 +178,21 @@ class BasketsController < ApplicationController
         basket = Basket.find good_id
       if elem[1][:ready_to_deliver].nil?
         if basket.send_date.nil?
-          basket.send_completed = FALSE
+          # basket.send_completed = FALSE
+          basket.delivery_status = 'new'
           basket.save
         end
       else
         basket = Basket.find good_id
-        basket.send_completed = TRUE
+        # basket.send_completed = TRUE
+        basket.delivery_status = 'requested'
         # Date is changed when user's request is completed by 'warehouse worker'
         # basket.send_date = Time.now
         basket.save
         @debug << "item id is #{good_id}"
         
       end
+
     } unless params[:goods].nil?
 
     @baskets = Basket.find :all,
@@ -221,9 +201,11 @@ class BasketsController < ApplicationController
       # from: "baskets",
       joins: "left join goods on baskets.good_id = goods.id",
       conditions: [
-        "(send_date is not NULL OR send_completed = 't') AND user_id = :user_id", {user_id: current_user.id}
+        # "(send_date is not NULL OR send_completed = 't') AND user_id = :user_id", {user_id: current_user.id}
+        "(send_date is not NULL OR delivery_status = 'requested') AND user_id = :user_id", {user_id: current_user.id}
       ],
-      order: "send_completed DESC, send_date DESC, title"
+      # order: "send_completed DESC, send_date DESC, title"
+      order: "delivery_status DESC, send_date DESC, title"
       
       # raise "Aborting"
       # redirect_to action: 'items' and return
@@ -241,15 +223,38 @@ class BasketsController < ApplicationController
       unless good[1][:ready_to_deliver].nil?
         basket = Basket.find good_id
         # basket.send_completed = TRUE
-        # Date is changed when user's request is completed by 'warehouse worker'
+        # Request is completed and Date is changed
         basket.send_date = Time.now
+        basket.delivery_status = 'completed'
         basket.save
         @baskets << basket
         @debug << "item id is #{good_id}"
         
       end
     } unless params[:goods].nil?
+
+    redirect_to controller: 'users', action: 'basket'
       
+  end
+
+  def delivery_prepare
+
+    @baskets = []
+    @debug = []
+    params[:goods].each { | good |
+      good_id = good[0]
+      unless good[1][:ready_to_deliver].nil?
+        basket = Basket.find good_id
+        # basket.send_completed = TRUE
+        # Request is completed and Date is changed
+        # basket.send_date = Time.now
+        # basket.delivery_status = 'completed'
+        # basket.save
+        @baskets << basket
+        @debug << "item id is #{good_id}"
+      end
+    } unless params[:goods].nil?
+    # redirect_to controller: action: 'raise_error' # No redirection! This is feature to make form re-sending.
   end
 
 end
