@@ -1,0 +1,20 @@
+<h1>Goods for everyone</h1>
+
+<table>
+  <tr>
+    <th>Title</th>
+    <th>Count</th>
+    <th>Price</th>
+    <th>Date</th>
+  </tr>
+
+<% @goods.each do |good| %>
+  <tr>
+    <td><%= good.title %></td>
+    <td><%= good.count %></td>
+    <td><%= good.price %></td>
+    <td><%= good.updated_at %></td>
+  </tr>
+<% end %>
+</table>
+

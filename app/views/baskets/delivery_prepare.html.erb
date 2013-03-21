@@ -1,6 +1,6 @@
 <h1>Prepared delivery items for user <%= %></h1>
 
-<% if @baskets.nil? then %>
+<% if @baskets.size == 0 then %>
 Nothing to deliver.
 <% else %>
 <table>

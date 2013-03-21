@@ -73,7 +73,8 @@ class BasketsController < ApplicationController
       end
     }
     
-    redirect_to :action => 'items' and return
+    # redirect_to :action => 'items' and return
+    redirect_to controller: :baskets, action: 'items' and return
 
     #~ @basket = Basket.new(params[:basket])
 

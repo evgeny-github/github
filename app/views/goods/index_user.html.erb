@@ -1,0 +1,32 @@
+<h1>Ordering goods</h1>
+
+<table>
+  <tr>
+    <th>yes</th>
+    <th>Count</th>
+    <th>Title</th>
+    <th>Price</th>
+    <th>id</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<%= form_tag '/baskets', :method => :post %>
+<% @goods.each do |good| %>
+  <tr>
+    <td><%#= check_box_tag "item_#{good.id}_order" %>
+    <%= check_box_tag "goods[#{good.id}][ordered]", -1 %></td>
+    <td>
+    <%#= good.count %>
+    <%= number_field_tag "goods[#{good.id}][quantity]", 0, :min => 0, :max => good.count %>
+    </td>
+    <td><%= good.title %></td>
+    <td><%= good.price %></td>
+    <td><%= good.id %></td>
+  </tr>
+<% end %>
+</table>
+<%= button_tag "make order" %>
+
+<br />

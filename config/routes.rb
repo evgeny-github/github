@@ -19,7 +19,6 @@ Shop::Application.routes.draw do
 
   get "welcome/show"
 
-  match '/baskets/items' => 'baskets#items'
   #match '/users/:id/send' => 'users#delivery'
   match '/users/:id/prepare' => 'baskets#delivery_prepare'
   match '/users/:id/send' => 'baskets#delivery'
@@ -29,6 +28,10 @@ Shop::Application.routes.draw do
   match '/profile/request' => 'baskets#requested'
   match '/profile/history' => 'baskets#history'
   match '/profile/delivery' => 'baskets#items'
+  match '/profile' => 'users#show'
+
+  #	Конфликтует с маршрутом '/profile/basket'
+  match '/baskets/items' => 'baskets#items'
 
   resources :baskets
 

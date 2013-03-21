@@ -58,11 +58,19 @@ class GoodsController < ApplicationController
   def index
     @title = 'goods list'
     @goods = Good.all
-
+    if admin_signed_in?
+      render 'index_admin'
+    elsif user_signed_in?
+      render 'index_user'
+    else
+      render 'index_guest'
+    end
+=begin
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @goods }
     end
+=end
   end
 
   # GET /goods/1

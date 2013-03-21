@@ -9,3 +9,12 @@
 <%- end -%>
 <%= %>
 </p>
+
+<% if user_signed_in? %>
+<p>
+<%= link_to "Profile", '/profile' %> | 
+<%= link_to "Basket", '/profile/basket' %> | 
+<%= link_to "History of orders", '/profile/history' %> | 
+<%= link_to "Go shopping!", goods_path %>
+</p>
+<% end %>
