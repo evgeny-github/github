@@ -144,10 +144,6 @@ class BasketsController < ApplicationController
 
   def history
     @title = 'User basket history'
-    # @baskets = Basket.all
-    # @baskets = Basket.find_all_by_user_id_and_send_completed current_user.id, TRUE,
-    # @baskets = Basket.find_all_by_user_id_and_delivery_requested current_user.id, TRUE,
-    # order: "send_completed DESC, send_date DESC"
     @baskets = Basket.find_all_by_user_id current_user.id,
     conditions: "send_date is not NULL OR delivery_status = 'requested'",
     order: "delivery_status DESC, send_date DESC"
@@ -167,35 +163,17 @@ class BasketsController < ApplicationController
 
     @baskets = []
     @debug = []
-    # raise 'You have error'
-    
-    # Basket.update_all("send_completed = 'f'", "user_id = #{current_user.id} and send_date is not NULL")
-    Basket.update_all("delivery_status = 'new'", "user_id = #{current_user.id} and send_date is NULL")
-    # redirect_to action: 'history' and return
+
+    Basket.__set_delivery_status_to_new current_user.id
 
     params[:goods].each { | elem |
       good_id = elem[0]
-      
-        basket = Basket.find good_id
-      if elem[1][:ready_to_deliver].nil?
-        if basket.send_date.nil?
-          # basket.send_completed = FALSE
-          basket.delivery_status = 'new'
-          basket.save
-        end
-      else
-        basket = Basket.find good_id
-        # basket.send_completed = TRUE
-        basket.delivery_status = 'requested'
-        # Date is changed when user's request is completed by 'warehouse worker'
-        # basket.send_date = Time.now
-        basket.save
-        @debug << "item id is #{good_id}"
-        
-      end
-
+      basket = Basket.find good_id
+      basket.__change_delivery_status_to_requested not(elem[1][:ready_to_deliver].nil?)
     } unless params[:goods].nil?
-
+=begin
+    # Это кусок вообще лишний. 
+    # Список товаров будет формироваться другим действием, на которое перенаправляем.
     @baskets = Basket.find :all,
       select: "baskets.*, goods.title",
       # from: "baskets, goods",
@@ -210,7 +188,8 @@ class BasketsController < ApplicationController
       
       # raise "Aborting"
       # redirect_to action: 'items' and return
-      redirect_to action: 'history' and return
+=end
+    redirect_to action: 'history' and return
   end
 
   def delivery
@@ -220,17 +199,11 @@ class BasketsController < ApplicationController
     
     params[:goods].each { | good |
       good_id = good[0]
-      
       unless good[1][:ready_to_deliver].nil?
         basket = Basket.find good_id
-        # basket.send_completed = TRUE
-        # Request is completed and Date is changed
-        basket.send_date = Time.now
-        basket.delivery_status = 'completed'
-        basket.save
+        basket.__complete_delivery
         @baskets << basket
         @debug << "item id is #{good_id}"
-        
       end
     } unless params[:goods].nil?
 
@@ -246,11 +219,6 @@ class BasketsController < ApplicationController
       good_id = good[0]
       unless good[1][:ready_to_deliver].nil?
         basket = Basket.find good_id
-        # basket.send_completed = TRUE
-        # Request is completed and Date is changed
-        # basket.send_date = Time.now
-        # basket.delivery_status = 'completed'
-        # basket.save
         @baskets << basket
         @debug << "item id is #{good_id}"
       end

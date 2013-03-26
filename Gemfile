@@ -7,11 +7,12 @@ gem 'rails', '3.2.1'
 
 gem 'sqlite3'
 
+gem 'devise' 
+gem 'cucumber' 
 
 group :development do
   gem 'rspec-rails'
   gem 'annotate'
-  gem 'devise'
 end
 
 group :test do

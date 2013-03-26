@@ -10,6 +10,7 @@ Baskets is empty.
     <th>Good</th>
     <th>Count</th>
     <th>Price</th>
+    <th>Total Cost</th>
     <th></th>
     <th></th>
     <th></th>
@@ -36,6 +37,7 @@ Baskets is empty.
     <td><%= basket.good.title %></td>
     <td><%= basket.count %></td>
     <td><%= basket.price %></td>
+    <td><%= basket.cost %></td>
     <td><%= link_to 'Edit', edit_basket_path(basket) if basket.send_date.nil? %></td>
     <td><%= link_to 'Remove', basket, confirm: 'Are you sure?', method: :delete %></td>
   </tr>
