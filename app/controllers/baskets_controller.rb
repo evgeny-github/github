@@ -41,58 +41,18 @@ class BasketsController < ApplicationController
   # POST /baskets
   # POST /baskets.json
   def create
-
     @goods = []
-    @debug = [123]
+    @debug = []
     
     params[:goods].each { | elem |
       good_id = elem[0]
-      
-      #~ @debug << elem[1][:quantity]
       unless elem[1][:ordered].nil?
         quantity = elem[1][:quantity]
-        if quantity.to_i > 0
-          good = Good.find good_id
-          price = good.price # ordered good price can be different from current price
-          @debug << "item id is #{good_id}"
-          @debug << elem[1][:ordered]
-          @debug << elem[1][:quantity]
-          @debug << current_user.class
-          #~ basket = current_user.baskets.new
-          #basket = current_user.baskets.create({:good => Good.find(good_id)})
-          # basket = Basket.find_by_user_id_and_good_id_and_send_completed current_user.id, good_id, FALSE
-
-=begin
-          basket = Basket.find_by_user_id_and_good_id_and_delivery_status current_user.id, good_id, 'new'
-          basket = Basket.new({:user => current_user, :good => Good.find(good_id), count: 0, price: price, delivery_status: 'new' }) if basket.nil?
-          basket.count += quantity.to_i
-          basket.send_completed = FALSE
-          basket.delivery_status = 'new'
-          # basket.update_attributes basket.id
-          basket.save
-=end
-
-          basket = Basket.__to_basket current_user.id, good_id, quantity.to_i
-          current_user.baskets << basket
-        end
+        basket = Basket.__to_basket current_user.id, good_id, quantity.to_i if quantity.to_i > 0
       end
     }
-    
-    # redirect_to :action => 'items' and return
-    # raise 'stop here'
+
     redirect_to controller: :baskets, action: 'items' and return
-
-    #~ @basket = Basket.new(params[:basket])
-
-    #~ respond_to do |format|
-      #~ if @basket.save
-        #~ format.html { redirect_to @basket, notice: 'Basket was successfully created.' }
-        #~ format.json { render json: @basket, status: :created, location: @basket }
-      #~ else
-        #~ format.html { render action: "new" }
-        #~ format.json { render json: @basket.errors, status: :unprocessable_entity }
-      #~ end
-    #~ end
   end
 
   # PUT /baskets/1
@@ -133,39 +93,16 @@ class BasketsController < ApplicationController
   # GET /profile/basket
   def items
     @title = 'User basket'
-    # @baskets = Basket.find_all_by_user_id current_user.id,
-    # joins: "left join goods on baskets.good_id = goods.id",
-    # conditions: ["send_date is NULL"],
-    # order: "title"
-    
-    # @baskets = Basket.with_names.user_basket(current_user.id).not_sent.order 'title'
     @baskets = Basket.user_basket(current_user.id).with_names.not_sent.order 'title'
-
-    # @debug ||= []
-    # @baskets.each { | basket |
-    #   @debug << basket
-    # }
-    # @baskets = []
   end
 
   def history
     @title = 'User basket history'
-    # @baskets = Basket.find_all_by_user_id current_user.id,
-    # conditions: "send_date is not NULL OR delivery_status = 'requested'",
-    # order: "delivery_status DESC, send_date DESC"
-
     @baskets = Basket.send_or_requested current_user.id
-    
-    # @debug ||= []
-    # @baskets.each { | basket |
-    #   @debug << basket
-    # }
     render 'items'
-
   end
 
   def requested # POST, redirected
-
     @baskets = []
     @debug = []
 
@@ -176,29 +113,11 @@ class BasketsController < ApplicationController
       basket = Basket.find good_id
       basket.__change_delivery_status_to_requested not(elem[1][:ready_to_deliver].nil?)
     } unless params[:goods].nil?
-=begin
-    # Это кусок вообще лишний. 
-    # Список товаров будет формироваться другим действием, на которое перенаправляем.
-    @baskets = Basket.find :all,
-      select: "baskets.*, goods.title",
-      # from: "baskets, goods",
-      # from: "baskets",
-      joins: "left join goods on baskets.good_id = goods.id",
-      conditions: [
-        # "(send_date is not NULL OR send_completed = 't') AND user_id = :user_id", {user_id: current_user.id}
-        "(send_date is not NULL OR delivery_status = 'requested') AND user_id = :user_id", {user_id: current_user.id}
-      ],
-      # order: "send_completed DESC, send_date DESC, title"
-      order: "delivery_status DESC, send_date DESC, title"
-      
-      # raise "Aborting"
-      # redirect_to action: 'items' and return
-=end
+
     redirect_to action: 'history' and return
   end
 
   def delivery # POST, redirected
-
     @baskets = []
     @debug = []
     
@@ -213,13 +132,12 @@ class BasketsController < ApplicationController
     } unless params[:goods].nil?
 
     redirect_to controller: 'users', action: 'basket'
-      
   end
 
   def delivery_prepare # POST, sticky
-
     @baskets = []
     @debug = []
+
     params[:goods].each { | good |
       good_id = good[0]
       unless good[1][:ready_to_deliver].nil?
