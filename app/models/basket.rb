@@ -6,8 +6,8 @@ class Basket < ActiveRecord::Base
   	price*count
   end
 
+
   def __complete_delivery
-  	# raise 'Method moved to BASKET model'
     self.send_date = Time.now
     self.delivery_status = 'completed'
     self.save
@@ -15,13 +15,19 @@ class Basket < ActiveRecord::Base
 
   def __change_delivery_status_to_requested(status)
   	if status
-	  self.delivery_status = 'requested'
+	    self.delivery_status = 'requested'
     else
-	  if self.send_date.nil?
-	      self.delivery_status = 'new'
-	  end
+      self.delivery_status = 'new' if self.send_date.nil?
     end
     self.save
+  end
+
+  def Basket.__to_basket(user_id, good_id, quantity)
+    basket = Basket.find_by_user_id_and_good_id_and_delivery_status user_id, good_id, 'new'
+    basket = Basket.new({:user => User.find(user_id), count: 0, delivery_status: 'new', price: Good.find(good_id).price}) if basket.nil?
+    basket.count += quantity.to_i
+    basket.save
+    basket
   end
 
 
@@ -30,8 +36,29 @@ class Basket < ActiveRecord::Base
   end
 
 
-  scope :send_of_requested,
-    conditions: "user_id = 'current_user_id' AND (send_date is not NULL OR delivery_status = 'requested')",
-    order: "delivery_status DESC, send_date DESC"
+  scope :with_names,
+    joins: "left join goods on baskets.good_id = goods.id"
+
+  scope :not_sent, conditions: ["send_date is NULL"]
+
+  scope :order, lambda { | order |
+    {
+      order: order
+    }
+  }
+
+  scope :user_basket, lambda { | user_id |
+    {
+      conditions: "user_id = '#{user_id}'"
+    }
+  }
+
+  scope :send_or_requested, lambda { | user_id |
+    {
+      conditions: "user_id = '#{user_id}' AND (send_date is not NULL OR delivery_status = 'requested')",
+      order: "delivery_status DESC, send_date DESC"
+    }
+  }
+
 
 end

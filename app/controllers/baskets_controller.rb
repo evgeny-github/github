@@ -61,6 +61,8 @@ class BasketsController < ApplicationController
           #~ basket = current_user.baskets.new
           #basket = current_user.baskets.create({:good => Good.find(good_id)})
           # basket = Basket.find_by_user_id_and_good_id_and_send_completed current_user.id, good_id, FALSE
+
+=begin
           basket = Basket.find_by_user_id_and_good_id_and_delivery_status current_user.id, good_id, 'new'
           basket = Basket.new({:user => current_user, :good => Good.find(good_id), count: 0, price: price, delivery_status: 'new' }) if basket.nil?
           basket.count += quantity.to_i
@@ -68,12 +70,16 @@ class BasketsController < ApplicationController
           basket.delivery_status = 'new'
           # basket.update_attributes basket.id
           basket.save
+=end
+
+          basket = Basket.__to_basket current_user.id, good_id, quantity.to_i
           current_user.baskets << basket
         end
       end
     }
     
     # redirect_to :action => 'items' and return
+    # raise 'stop here'
     redirect_to controller: :baskets, action: 'items' and return
 
     #~ @basket = Basket.new(params[:basket])
@@ -127,39 +133,38 @@ class BasketsController < ApplicationController
   # GET /profile/basket
   def items
     @title = 'User basket'
-    # @baskets = Basket.all
-    @baskets = Basket.find_all_by_user_id current_user.id,
-    joins: "left join goods on baskets.good_id = goods.id",
-    conditions: ["send_date is NULL"],
-    order: "title"
+    # @baskets = Basket.find_all_by_user_id current_user.id,
+    # joins: "left join goods on baskets.good_id = goods.id",
+    # conditions: ["send_date is NULL"],
+    # order: "title"
     
-    @debug ||= []
-    #~ @debug << @baskets.class.inspect
-    @baskets.each { | basket |
-      # basket.good_id = 'title'
-      #~ basket.good_id = 123
-      @debug << basket
-    }
+    # @baskets = Basket.with_names.user_basket(current_user.id).not_sent.order 'title'
+    @baskets = Basket.user_basket(current_user.id).with_names.not_sent.order 'title'
+
+    # @debug ||= []
+    # @baskets.each { | basket |
+    #   @debug << basket
+    # }
+    # @baskets = []
   end
 
   def history
     @title = 'User basket history'
-    @baskets = Basket.find_all_by_user_id current_user.id,
-    conditions: "send_date is not NULL OR delivery_status = 'requested'",
-    order: "delivery_status DESC, send_date DESC"
+    # @baskets = Basket.find_all_by_user_id current_user.id,
+    # conditions: "send_date is not NULL OR delivery_status = 'requested'",
+    # order: "delivery_status DESC, send_date DESC"
+
+    @baskets = Basket.send_or_requested current_user.id
     
-    @debug ||= []
-    #~ @debug << @baskets.class.inspect
-    @baskets.each { | basket |
-      # basket.good_id = 'title'
-      #~ basket.good_id = 123
-      @debug << basket
-    }
+    # @debug ||= []
+    # @baskets.each { | basket |
+    #   @debug << basket
+    # }
     render 'items'
 
   end
 
-  def requested
+  def requested # POST, redirected
 
     @baskets = []
     @debug = []
@@ -192,7 +197,7 @@ class BasketsController < ApplicationController
     redirect_to action: 'history' and return
   end
 
-  def delivery
+  def delivery # POST, redirected
 
     @baskets = []
     @debug = []
@@ -211,7 +216,7 @@ class BasketsController < ApplicationController
       
   end
 
-  def delivery_prepare
+  def delivery_prepare # POST, sticky
 
     @baskets = []
     @debug = []
@@ -223,7 +228,7 @@ class BasketsController < ApplicationController
         @debug << "item id is #{good_id}"
       end
     } unless params[:goods].nil?
-    # redirect_to controller: action: 'raise_error' # No redirection! This is feature to make form re-sending.
+    # redirect_to controller: 'users', action: 'raise_error' # No redirection! This feature is made intentionally to allow form re-sending.
   end
 
 end
