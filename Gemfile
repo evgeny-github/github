@@ -9,6 +9,7 @@ gem 'sqlite3'
 
 gem 'devise' 
 gem 'cucumber' 
+gem 'cucumber-rails'
 
 group :development do
   gem 'rspec-rails'
