@@ -16,12 +16,10 @@ Baskets is empty.
     <th></th>
   </tr>
 
-<%#= form_tag "#{user_path(current_user.user_id)}/send', :method => :post %>
 <%= form_tag "#{user_path(current_user.id)}/send", :method => :post %>
 <% @baskets.each do |basket| %>
   <tr>
     <td>
-    <%#= check_box_tag "basket.good_id" if basket.send_completed.nil? %>
     <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]" if basket.send_completed.nil? %>
     </td>
     <td><%= basket.send_date %></td>
@@ -39,4 +37,3 @@ Baskets is empty.
 
 <br />
 
-<%= link_to 'New Basket', new_basket_path %>

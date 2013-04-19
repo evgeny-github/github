@@ -109,12 +109,26 @@ class UsersController < ApplicationController
   def basket
     
     @debug = []
-    @baskets = Basket.find_all_by_user_id_and_send_date current_user.id, nil,
+    user_id = params[:id]
+    # raise "User is `#{user_id}`"
+    # @baskets = Basket.find_all_by_user_id_and_send_date current_user.id, nil,
+    @baskets = Basket.find_all_by_user_id_and_send_date user_id, nil,
       select: "baskets.*, goods.title",
       # from: "baskets, goods",
       joins: "left join goods on baskets.good_id = goods.id",
       # order: "send_completed DESC, title"
       order: "delivery_status DESC, title"
     @debug << @baskets
+  end
+
+  def requests
+    @users = User.with_requests
+    if @users.nil?
+      @page_header = 'No requests today'
+    else
+      @page_header = 'Listing of users requests'
+    end
+    render 'user_requests'
+
   end
 end

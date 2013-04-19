@@ -15,14 +15,10 @@
     <th></th>
   </tr>
 
-<%#= form_tag "#{user_path(current_user.user_id)}/send', :method => :post %>
 <%= form_tag "#{user_path(current_user.id)}/prepare", :method => :post %>
 <% @baskets.each do |basket| %>
   <tr>
     <td>
-    <%#= check_box_tag "basket.good_id" if basket.send_completed.nil? %>
-    <%# if basket.send_completed.nil? or (basket.send_completed == FALSE) -%>
-    <%# if basket.send_completed == TRUE -%>
     <% if ["requested"].include? basket.delivery_status -%>
     <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]" %>
     <% else %>

@@ -1,33 +1,36 @@
-<h1>Basket items for user</h1>
-
-<% if @baskets.nil? then %>
-Baskets is empty.
+<% if @baskets == [] %>
+<% if params[:action] == 'history' %>
+<h1>You have no history</h1>
 <% else %>
+<h1>Your basket is empty</h1>
+<% end %>
+<% else %>
+<% if params[:action] == 'history' %>
+<h1>History for user</h1>
+<% else %>
+<h1>Basket items for user</h1>
+<% end %>
+
 <table>
   <tr>
-    <th>Get item</th>
+    <th>Deliver item</th>
     <th>Delivery date</th>
     <th>Good</th>
     <th>Count</th>
     <th>Price</th>
     <th>Total Cost</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <% if params[:controller] != 'baskets' or params[:action] != 'history' %>
+    <th>Edit request</th>
+    <th>Remove request</th>
+    <% end -%>
+    <th>id</th>
   </tr>
 
-<%#= form_tag "#{user_path(current_user.user_id)}/send', :method => :post %>
-<%#= form_tag "#{user_path(current_user.id)}/send", :method => :post %>
 <%= form_tag "/profile/request", :method => :post %>
 <% @baskets.each do |basket| %>
   <tr>
     <td>
-    <%#= check_box_tag "basket.good_id" if basket.send_completed.nil? %>
-    <%# if basket.send_completed.nil? or (basket.send_completed == FALSE) -%>
-    <%# if basket.send_date.nil? -%>
-    <%#= basket.send_completed ? -1 : +1 -%>
     <% if ["requested", "new"].include? basket.delivery_status -%>
-    <%#= check_box_tag "goods[#{basket.id}][ready_to_deliver]", -1, basket.send_completed %>
     <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", -1, basket.delivery_status == 'requested' %>
     <% else %>
     <%= check_box_tag "goods[#{basket.id}][ready_to_deliver]", 1, false, :disabled => true %>
@@ -38,14 +41,21 @@ Baskets is empty.
     <td><%= basket.count %></td>
     <td><%= basket.price %></td>
     <td><%= basket.cost %></td>
-    <td><%= link_to 'Edit', edit_basket_path(basket) if basket.send_date.nil? %></td>
-    <td><%= link_to 'Remove', basket, confirm: 'Are you sure?', method: :delete %></td>
+    <% if params[:controller] != 'baskets' or params[:action] != 'history' %>
+    <% if basket.delivery_status == 'new' %>
+    <td><%= link_to 'Edit request', edit_basket_path(basket) %></td>
+    <td><%= link_to 'Remove request', basket, confirm: 'Are you sure?', method: :delete %></td>
+    <% else -%>
+    <td>in deliver state</td>
+    <td>in deliver state</td>
+    <% end -%>
+    <% end -%>
+    <td><%= basket.user_id %></td>
   </tr>
 <% end %>
 </table>
-<%= button_tag "make order" %>
+<%= button_tag "make order" unless params[:action] == 'history' %>
 <% end %>
 
 <br />
 
-<%= link_to 'New Basket', new_basket_path %>

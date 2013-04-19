@@ -1,20 +1,31 @@
+<% if admin_signed_in? %>
 <p>
 <%= link_to 'Home page', '/' %> |
-<%- if user_signed_in? -%>
-<%= link_to "Profile", user_path(current_user) %>
-<%= link_to "Log out #{current_user.email}", '/signout' if user_signed_in? %>
-<%- else -%>
-<%= link_to 'Log in', '/signin' %> |
-<%= link_to 'Registration', '/users/sign_up' %>
-<%- end -%>
-<%= %>
+<%= link_to "Log out #{current_admin.email}", '/signout' %>
 </p>
-
-<% if user_signed_in? %>
+<p>
+<%= link_to "Goods", goods_path %> | 
+<%= link_to "Requests", '/users/requests' %> | 
+<%= link_to "Users", users_path %>
+</p>
+<% elsif user_signed_in? %>
+<p>
+<%= link_to 'Home page', '/' %> |
+<%= link_to "Log out #{current_user.email}", '/signout' %>
+</p>
 <p>
 <%= link_to "Profile", '/profile' %> | 
 <%= link_to "Basket", '/profile/basket' %> | 
 <%= link_to "History of orders", '/profile/history' %> | 
 <%= link_to "Go shopping!", goods_path %>
+</p>
+<% else %>
+<p>
+<%= link_to 'Home page', '/' %> |
+<%= link_to 'Log in', '/signin' %> |
+<%= link_to 'Registration', '/users/sign_up' %>
+</p>
+<p>
+<%= link_to "View our goods", goods_path %>
 </p>
 <% end %>

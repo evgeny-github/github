@@ -22,7 +22,11 @@ Shop::Application.routes.draw do
   #match '/users/:id/send' => 'users#delivery'
   match '/users/:id/prepare' => 'baskets#delivery_prepare'
   match '/users/:id/send' => 'baskets#delivery'
-  match '/users/:id/basket' => 'users#basket'
+  match '/users/:id/basket' => 'users#basket',
+    :requirements => { :id => /^\d+/ }
+  match '/users/baskets' => 'users#baskets'
+  match '/users/list' => 'baskets#request_list'
+  match '/users/requests' => 'users#requests'
 
   match '/profile/basket' => 'baskets#items'
   match '/profile/request' => 'baskets#requested'

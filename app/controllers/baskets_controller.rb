@@ -47,6 +47,7 @@ class BasketsController < ApplicationController
     params[:goods].each { | elem |
       good_id = elem[0]
       unless elem[1][:ordered].nil?
+      # raise("we have:\n#{good_id}\n#{elem[0].inspect}\n")
         quantity = elem[1][:quantity]
         basket = Basket.__to_basket current_user.id, good_id, quantity.to_i if quantity.to_i > 0
       end
@@ -77,6 +78,8 @@ class BasketsController < ApplicationController
   def destroy
     @basket = Basket.find(params[:id])
     @basket.destroy
+
+    redirect_to action: 'items' and return
 
     respond_to do |format|
       format.html { redirect_to baskets_url }
@@ -131,7 +134,8 @@ class BasketsController < ApplicationController
       end
     } unless params[:goods].nil?
 
-    redirect_to controller: 'users', action: 'basket'
+    redirect_to controller: 'users', action: 'requests'
+    # redirect_to controller: 'users', action: 'basket'
   end
 
   def delivery_prepare # POST, sticky
@@ -149,4 +153,11 @@ class BasketsController < ApplicationController
     # redirect_to controller: 'users', action: 'raise_error' # No redirection! This feature is made intentionally to allow form re-sending.
   end
 
+def request_list
+  # @baskets = Basket.find_by_delivery_status('requested').with_names.were_requested
+  # @baskets = Basket.with_names.were_requested
+  @baskets = Basket.were_requested
+  render action: 'items'
+end
+  
 end

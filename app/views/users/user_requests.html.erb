@@ -1,0 +1,18 @@
+<h1><%= @page_header %></h1>
+
+<table>
+  <tr>
+    <th>Email</th>
+    <th>Basket</th>
+    <th>User info</th>
+  </tr>
+
+<% @users.each do |user| %>
+  <tr>
+    <td><%= user.email %></td>
+    <td><%= link_to 'Show basket', "#{user_path(user)}/basket" %></td>
+    <td><%= link_to 'View user', user_path(user) %></td>
+  </tr>
+<% end %>
+</table>
+

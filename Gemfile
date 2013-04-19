@@ -8,16 +8,18 @@ gem 'rails', '3.2.1'
 gem 'sqlite3'
 
 gem 'devise' 
-gem 'cucumber' 
-gem 'cucumber-rails'
+
+group :development, :test do
+  gem 'rspec-rails'
+  gem 'cucumber-rails'
+  gem 'database_cleaner'
+end
 
 group :development do
-  gem 'rspec-rails'
   gem 'annotate'
 end
 
 group :test do
-  gem 'rspec-rails'
   gem 'webrat', '0.7.1'
 end
 
